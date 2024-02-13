@@ -1,9 +1,10 @@
-import requests
-import pytz
 import os
+import asyncio
+import aiocron
+import requests
+from aiogram import Bot, Dispatcher
+from aiogram.utils import executor
 from dotenv import load_dotenv
-from telegram import Bot
-from apscheduler.schedulers.blocking import BlockingScheduler
 
 # Read API keys from config file
 load_dotenv()
@@ -17,9 +18,10 @@ BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 CHANNEL_ID = '-1002043368543'
 
 bot = Bot(token=BOT_TOKEN)
+dp = Dispatcher(bot)
 
 
-def send_crypto_prices():
+async def send_bitcoin_price():
     response = requests.get(API_URL)
     data = response.json()
     bitcoin_price = round(data['bitcoin']['usd'])
@@ -29,14 +31,23 @@ def send_crypto_prices():
     gram_price = round(data['gram-2']['usd'], 4)
 
     message = f'• BTC: ${bitcoin_price}\n• ETH: ${ethereum_price}\n• TON: ${ton_price}\n• KSP: ${kaspa_price}\n• GRAM: ${gram_price}'
-    bot.send_message(chat_id=CHANNEL_ID, text=message)
+    await bot.send_message(chat_id=CHANNEL_ID, text=message)
+    print('everything is working good!')
 
 
-def main():
-    scheduler = BlockingScheduler(timezone=pytz.utc)
-    scheduler.add_job(send_crypto_prices, 'interval', minutes=1)
-    scheduler.start()
+async def on_startup():
+    await bot.send_message(chat_id=CHANNEL_ID, text='Bot has been started')
+
+
+async def on_shutdown():
+    await bot.send_message(chat_id=CHANNEL_ID, text='Bot has been stopped')
 
 
 if __name__ == '__main__':
-    main()
+    loop = asyncio.get_event_loop()
+
+    # Schedule the task to run every minute
+    aiocron.crontab('*/1 * * * *', func=send_bitcoin_price, loop=loop)
+
+    executor.start_polling(dp, on_startup=on_startup, on_shutdown=on_shutdown, skip_updates=True)
+    loop.run_forever()

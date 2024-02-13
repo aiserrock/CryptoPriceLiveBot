@@ -1,5 +1,6 @@
 import os
 import asyncio
+
 import aiocron
 import requests
 from aiogram import Bot, Dispatcher
@@ -35,11 +36,11 @@ async def send_bitcoin_price():
     print('everything is working good!')
 
 
-async def on_startup():
+async def on_startup(dp):
     await bot.send_message(chat_id=CHANNEL_ID, text='Bot has been started')
 
 
-async def on_shutdown():
+async def on_shutdown(dp):
     await bot.send_message(chat_id=CHANNEL_ID, text='Bot has been stopped')
 
 

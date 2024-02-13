@@ -35,18 +35,9 @@ async def send_bitcoin_price():
     await bot.send_message(chat_id=CHANNEL_ID, text=message)
     print('everything is working good! Next message will appear after 59 seconds')
 
-
-async def on_startup(dp):
-    await bot.send_message(chat_id=CHANNEL_ID, text='Bot has been started')
-
-
-async def on_shutdown(dp):
-    await bot.send_message(chat_id=CHANNEL_ID, text='Bot has been stopped')
-
-
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    executor.start_polling(dp, on_startup=on_startup, on_shutdown=on_shutdown, skip_updates=True)
     # Schedule the task to run every minute
     aiocron.crontab('*/1 * * * *', func=send_bitcoin_price, loop=loop)
+    executor.start_polling(dp)
     loop.run_forever()

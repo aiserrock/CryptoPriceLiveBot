@@ -7,4 +7,4 @@ Get started:
 2. you should create .env file and put inside this:  
 ```TELEGRAM_BOT_TOKEN=your_telegram_bot_token```
 3. `pip install -r requirements.txt`
-4. 'python3 main.py'
+4. ```python3 main.py```

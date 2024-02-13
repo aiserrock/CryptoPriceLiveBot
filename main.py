@@ -46,9 +46,7 @@ async def on_shutdown(dp):
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-
+    executor.start_polling(dp, on_startup=on_startup, on_shutdown=on_shutdown, skip_updates=True)
     # Schedule the task to run every minute
     aiocron.crontab('*/1 * * * *', func=send_bitcoin_price, loop=loop)
-
-    executor.start_polling(dp, on_startup=on_startup, on_shutdown=on_shutdown, skip_updates=True)
     loop.run_forever()

@@ -1,49 +1,41 @@
-import asyncio
-import configparser
 import requests
-import datetime
-from aiogram import Bot, Dispatcher, types
-from aiocron import crontab
+import pytz
+import os
+from dotenv import load_dotenv
+from telegram import Bot
+from apscheduler.schedulers.blocking import BlockingScheduler
 
-config = configparser.ConfigParser()
-config.read('app.config')
-# Retrieve API keys from the configuration file
-TELEGRAM_BOT_TOKEN = config.get('API_KEYS', 'TELEGRAM_BOT_TOKEN')
+# Read API keys from config file
+load_dotenv()
 
-# Replace 'YOUR_BOT_TOKEN' and 'your_channel_id' with your actual values
-BOT_TOKEN = TELEGRAM_BOT_TOKEN
-# Replace YOUR_CHANNEL_ID
-CHANNEL_ID = '1002043368543'
-# Replace API
-BITCOIN_API_URL = 'https://api.coindesk.com/v1/bpi/currentprice.json'
+# https://www.coingecko.com/api/documentation
+# /simple/price
+API_URL = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum%2Cthe-open-network%2Ckaspa%2Cgram-2' \
+          '&vs_currencies=usd&include_market_cap=false&include_24hr_vol=false&include_24hr_change=false' \
+          '&include_last_updated_at=false&precision=full'
+BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+CHANNEL_ID = '-1002043368543'
 
 bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher(bot)
 
 
-async def send_bitcoin_price():
-    response = requests.get(BITCOIN_API_URL)
+def send_crypto_prices():
+    response = requests.get(API_URL)
     data = response.json()
-    bitcoin_price = data['bpi']['USD']['rate']
-    await bot.send_message(chat_id=CHANNEL_ID, text=f'Текущий курс биткоина: {bitcoin_price} USD')
+    bitcoin_price = round(data['bitcoin']['usd'])
+    ethereum_price = round(data['ethereum']['usd'])
+    ton_price = round(data['the-open-network']['usd'], 2)
+    kaspa_price = round(data['kaspa']['usd'], 3)
+    gram_price = round(data['gram-2']['usd'], 4)
 
-
-@dp.message_handler(commands=['start'])
-async def handle_start(message: types.Message):
-    await message.reply("Привет! Этот бот отправляет курс биткоина в ваш канал каждую минуту.")
-
-
-async def scheduler():
-    # Schedule the task using aiocron
-    crontab('*/1 * * * *', send_bitcoin_price, tz=datetime.datetime.now().astimezone().tzinfo)
-
-    while True:
-        await asyncio.sleep(60)  # Sleep for 60 seconds
+    message = f'• BTC: ${bitcoin_price}\n• ETH: ${ethereum_price}\n• TON: ${ton_price}\n• KSP: ${kaspa_price}\n• GRAM: ${gram_price}'
+    bot.send_message(chat_id=CHANNEL_ID, text=message)
 
 
 def main():
-    # Start the scheduler
-    asyncio.get_event_loop().run_until_complete(scheduler())
+    scheduler = BlockingScheduler(timezone=pytz.utc)
+    scheduler.add_job(send_crypto_prices, 'interval', minutes=1)
+    scheduler.start()
 
 
 if __name__ == '__main__':

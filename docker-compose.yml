@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  cryptopricelivebot:
+    image: cryptopricelivebot_docker_image:tag
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: always

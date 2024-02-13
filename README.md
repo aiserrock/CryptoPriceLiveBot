@@ -1,6 +1,6 @@
 ## Bitcoin Ethereum Kaspa Ton live price
 
-[https://t.me/CryptoPricePulseBot](channel)
+[telegram channel](https://t.me/crypto_price_puls)
 
 Get started:
 1. cd to CryptoPricePulsBot directory

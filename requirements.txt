@@ -2,3 +2,4 @@ aiocron~=1.8
 requests~=2.31.0
 aiogram~=2.25
 python-dotenv~=1.0.1
+pybit~=5.6.2

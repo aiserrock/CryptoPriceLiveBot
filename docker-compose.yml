@@ -2,10 +2,10 @@ version: '3'
 
 services:
   cryptopricelivebot:
-    image: cryptopricelivebot_docker_image:tag
+    image: cryptopricelivebot_docker_image
+    dns:
+      - 8.8.8.8
     build:
       context: .
-      dockerfile: Dockerfile
-    env_file:
-      - .env
+      dockerfile: ./Dockerfile
     restart: always

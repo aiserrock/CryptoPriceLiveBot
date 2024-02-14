@@ -7,7 +7,5 @@ services:
       - 8.8.8.8
     build:
       context: .
-      dockerfile: Dockerfile
-    env_file:
-      - .env
+      dockerfile: ./Dockerfile
     restart: always

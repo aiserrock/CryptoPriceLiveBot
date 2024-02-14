@@ -50,7 +50,7 @@ async def send_bitcoin_price():
     kaspa_price = round(liveprice_data[3]['rate'], 3)
     gram_price = round(coingecko_data['gram-2']['usd'], 4)
     message = f'• BTC: ${bitcoin_price}\n• ETH: ${ethereum_price}\n• TON: ${ton_price}\n• KSP: ${kaspa_price}\n• GRAM: ${gram_price}'
-    # await bot.send_message(chat_id=CHANNEL_ID, text=message)
+    await bot.send_message(chat_id=CHANNEL_ID, text=message)
     print(message)
     print('everything is working good! Next message will appear after 59 seconds')
 

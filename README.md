@@ -4,10 +4,10 @@
 
 Get started:
 1. cd to CryptoPricePulsBot directory
-2. you should rename .env_template to .env and put inside:
-  2.1 your telegram bot token
-  2.2 your telegram channel id
-  2.3 your livepriceapi token
+2. you should rename .env_template to .env and put inside:  
+  2.1 your telegram bot token  
+  2.2 your telegram channel id  
+  2.3 your livepriceapi token  
    
 3. `pip install -r requirements.txt`
 4. `python3 main.py`

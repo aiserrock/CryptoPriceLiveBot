@@ -24,7 +24,7 @@ dp = Dispatcher(bot)
 session = HTTP()
 
 
-async def send_price():
+async def _get_data() -> list:
     payload = json.dumps({
         "codes": ["BTC", "ETH", "KAS", "TONCOIN", "_GRAM", "CAS"],
         "currency": "USD",
@@ -37,8 +37,10 @@ async def send_price():
     }
 
     liveprice_response = requests.request("POST", LIVEPRICE_API_URL, headers=headers, data=payload)
-    liveprice_data = liveprice_response.json()
+    return liveprice_response.json()
 
+
+def _make_currencies_price_message(liveprice_data: list) -> str:
     bitcoin_price = round(liveprice_data[0]['rate'])
     ethereum_price = round(liveprice_data[1]['rate'])
     ton_price = round(liveprice_data[2]['rate'], 1)
@@ -46,14 +48,30 @@ async def send_price():
     gram_price = round(liveprice_data[4]['rate'], 3)
     kaspa_classic_price = round(liveprice_data[5]['rate'], 4)
     message = f'• BTC: ${bitcoin_price}\n• ETH: ${ethereum_price}\n• TON: ${ton_price}\n• KSP: ${kaspa_price}\n• GRAM: ${gram_price}\n• CAS: ${kaspa_classic_price}'
+    return message
+
+
+async def _send_message_to_channel(message: str):
     await bot.send_message(chat_id=CHANNEL_ID, text=message)
     print(message)
     print('everything is working good! Next message will appear after 59 seconds')
 
 
+async def _send_message_to_ls(message: str):
+    await bot.send_message(chat_id=MY_ID, text=message)
+
+    print('ls message send successfully')
+
+
+async def iterate():
+    liveprice_data = await _get_data()
+    message = _make_currencies_price_message(liveprice_data)
+    await _send_message_to_channel(message)
+    await _send_message_to_ls(message)
+
+
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    # Schedule the task to run every minute
-    aiocron.crontab('*/1 * * * *', func=send_price, loop=loop)
+    aiocron.crontab('*/1 * * * *', func=iterate, loop=loop)
     executor.start_polling(dp)
     loop.run_forever()

@@ -57,17 +57,10 @@ async def _send_message_to_channel(message: str):
     print('everything is working good! Next message will appear after 59 seconds')
 
 
-async def _send_message_to_ls(message: str):
-    await bot.send_message(chat_id=MY_ID, text=message)
-
-    print('ls message send successfully')
-
-
 async def iterate():
     liveprice_data = await _get_data()
     message = _make_currencies_price_message(liveprice_data)
     await _send_message_to_channel(message)
-    await _send_message_to_ls(message)
 
 
 if __name__ == '__main__':

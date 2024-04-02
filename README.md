@@ -10,3 +10,8 @@ Get started:
 
 or if your use docker:
 1. `docker-compose up -d --build`
+
+
+### OPTIONAL during developing
+generate full requirements.txt
+> pipreqs ..path_to_folder../CryptoPriceLiveBot --force

@@ -46,7 +46,7 @@ async def _send_message_to_channel(message: str):
 
 
 async def _get_cache_prise() -> float:
-    result = requests.get(AKBARS_BEST_USD_PRICE, headers=HEADERS, proxies=proxies)
+    result = requests.get(AKBARS_BEST_USD_PRICE, headers=HEADERS)
     data = result.json()
     cache_usd_price = round(data['branches'][0]['sellPrice'], 2)
     return cache_usd_price

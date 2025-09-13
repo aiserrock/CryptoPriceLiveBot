@@ -18,3 +18,4 @@ or if your use docker:
 ### if it don't work use:
 1. `docker build --network=host -t cryptopricelivebot:latest .`
 2. `docker run -d --restart unless-stopped --network host 92434c2a30d786b9c3e3f0632422bc535bc2b7573c171ced266e1f2dee9cad5e`
+где host ... - docker image
